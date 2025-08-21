@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة مخزن البورسلين - لوحة التحكم</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* bg-gray-50 */
+            color: #1f2937; /* text-gray-900 */
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1.5rem; /* rounded-3xl */
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            font-size: 1rem;
+            color: #374151; /* text-gray-700 */
+            background-color: #f9fafb; /* bg-gray-50 */
+            transition: all 0.3s ease;
+            text-align: right; /* Align text to the right for Arabic */
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #4f46e5; /* indigo-600 */
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            background-color: #ffffff;
+        }
+        .button-primary {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600; /* font-semibold */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .button-primary:hover {
+            background-color: #6366f1; /* indigo-500 */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .button-secondary {
+            background-color: #cbd5e1; /* slate-300 */
+            color: #1f2937; /* gray-900 */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .button-secondary:hover {
+            background-color: #e2e8f0; /* slate-200 */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* Allow clicks through when hidden */
+        }
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 500px;
+            animation: modalSlideUp 0.4s ease-out;
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-button {
+            color: #aaa;
+            float: left; /* Align to the left for Arabic */
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #1f2937; /* gray-900 */
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .alert-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInAlert 0.5s forwards;
+        }
+        @keyframes slideInAlert {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .alert-success {
+            background-color: #d1fae5; /* green-100 */
+            color: #065f46; /* green-700 */
+        }
+        .alert-error {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-700 */
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            margin: 0 auto 1rem auto;
+            border: 1px solid #e5e7eb;
+        }
+        .product-card h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        .product-card p {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        .highlighted-product-info {
+            background-color: #ecfdf5; /* green-50 */
+            border: 1px solid #a7f3d0; /* green-200 */
+            color: #065f46; /* green-700 */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-top: 1.5rem;
+            animation: scaleIn 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .highlighted-product-info img {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.5rem;
+            object-fit: contain;
+            border: 1px solid #d1fae5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-warehouse ml-2"></i> إدارة مخزن البورسلين</h1>
+            <button id="logoutButton" class="button-secondary">
+                <i class="fas fa-sign-out-alt ml-2"></i> تسجيل الخروج
+            </button>
+        </div>
+
+        <!-- قسم عرض إحصائيات المنتج -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-center">
+                <i class="fas fa-search ml-2"></i> البحث وعرض تفاصيل المنتج
+            </h2>
+            <div class="mb-4">
+                <input type="text" id="searchProductId" placeholder="أدخل تسلسل المنتج للبحث..." class="input-field">
+            </div>
+            <div id="productDetailsDisplay" class="hidden highlighted-product-info">
+                <!-- تفاصيل المنتج ستظهر هنا -->
+            </div>
+            <p id="searchMessage" class="alert-message hidden"></p>
+        </div>
+
+        <!-- أزرار الإجراءات الرئيسية -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <button id="addQuantityBtn" class="button-primary flex items-center justify-center p-4">
+                <i class="fas fa-plus-circle ml-2 text-2xl"></i> إضافة كمية
+            </button>
+            <button id="subtractQuantityBtn" class="button-primary flex items-center justify-center p-4">
+                <i class="fas fa-minus-circle ml-2 text-2xl"></i> خصم كمية
+            </button>
+            <button id="addProductBtn" class="button-primary flex items-center justify-center p-4">
+                <i class="fas fa-box-open ml-2 text-2xl"></i> إضافة منتج جديد
+            </button>
+        </div>
+
+        <!-- عرض جميع المنتجات -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-center">
+                <i class="fas fa-boxes ml-2"></i> جميع المنتجات في المخزن
+            </h2>
+            <div id="productsList" class="product-grid">
+                <!-- المنتجات ستُعرض هنا -->
+            </div>
+            <p id="productsListMessage" class="alert-message hidden"></p>
+        </div>
+
+    </div>
+
+    <!-- Modal لإضافة كمية -->
+    <div id="addQuantityModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addQuantityModal')">&times;</span>
+            <h2 class="text-2xl font-semibold mb-6 text-center">إضافة كمية لمنتج</h2>
+            <div class="mb-4">
+                <label for="addQuantityProductId" class="block text-gray-700 text-sm font-bold mb-2">تسلسل المنتج:</label>
+                <input type="text" id="addQuantityProductId" class="input-field" placeholder="أدخل تسلسل المنتج">
+            </div>
+            <div class="mb-6">
+                <label for="quantityToAdd" class="block text-gray-700 text-sm font-bold mb-2">الكمية المراد إضافتها:</label>
+                <input type="number" id="quantityToAdd" class="input-field" value="1" min="1">
+            </div>
+            <button id="submitAddQuantity" class="button-primary w-full">إضافة</button>
+            <p id="addQuantityMessage" class="alert-message hidden"></p>
+        </div>
+    </div>
+
+    <!-- Modal لخصم كمية -->
+    <div id="subtractQuantityModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('subtractQuantityModal')">&times;</span>
+            <h2 class="text-2xl font-semibold mb-6 text-center">خصم كمية من منتج</h2>
+            <div class="mb-4">
+                <label for="subtractQuantityProductId" class="block text-gray-700 text-sm font-bold mb-2">تسلسل المنتج:</label>
+                <input type="text" id="subtractQuantityProductId" class="input-field" placeholder="أدخل تسلسل المنتج">
+            </div>
+            <div class="mb-6">
+                <label for="quantityToSubtract" class="block text-gray-700 text-sm font-bold mb-2">الكمية المراد خصمها:</label>
+                <input type="number" id="quantityToSubtract" class="input-field" value="1" min="1">
+            </div>
+            <button id="submitSubtractQuantity" class="button-primary w-full">خصم</button>
+            <p id="subtractQuantityMessage" class="alert-message hidden"></p>
+        </div>
+    </div>
+
+    <!-- Modal لإضافة منتج جديد -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addProductModal')">&times;</span>
+            <h2 class="text-2xl font-semibold mb-6 text-center">إضافة منتج جديد</h2>
+            <div class="mb-4">
+                <label for="newProductName" class="block text-gray-700 text-sm font-bold mb-2">اسم الشركة:</label>
+                <input type="text" id="newProductName" class="input-field" placeholder="اسم الشركة">
+            </div>
+            <div class="mb-4">
+                <label for="newProductId" class="block text-gray-700 text-sm font-bold mb-2">تسلسل المنتج:</label>
+                <input type="text" id="newProductId" class="input-field" placeholder="تسلسل المنتج (فريد)">
+            </div>
+            <div class="mb-4">
+                <label for="newProductQuantity" class="block text-gray-700 text-sm font-bold mb-2">الكمية الأولية:</label>
+                <input type="number" id="newProductQuantity" class="input-field" value="0" min="0">
+            </div>
+            <div class="mb-6">
+                <label for="newProductImage" class="block text-gray-700 text-sm font-bold mb-2">رابط الصورة:</label>
+                <input type="text" id="newProductImage" class="input-field" placeholder="رابط URL للصورة">
+            </div>
+            <button id="submitAddProduct" class="button-primary w-full">إضافة المنتج</button>
+            <p id="addProductMessage" class="alert-message hidden"></p>
+        </div>
+    </div>
+
+    <script>
+        // *** مهم جداً: استبدل هذا الرابط برابط الـ Backend الفعلي بعد الرفع على Railway ***
+        // مثال: const API_BASE_URL = 'https://your-railway-app-name-xxxx.up.railway.app';
+        // للتشغيل المحلي، اتركه كما هو: 'http://127.0.0.1:5000'
+        const API_BASE_URL = 'http://127.0.0.1:5000'; 
+
+        // دالة لعرض رسائل التنبيه
+        function showAlert(messageElement, message, type = 'success') {
+            messageElement.textContent = message;
+            messageElement.classList.remove('hidden', 'alert-success', 'alert-error');
+            if (type === 'success') {
+                messageElement.classList.add('alert-success');
+            } else {
+                messageElement.classList.add('alert-error');
+            }
+            // إخفاء الرسالة بعد 3 ثوانٍ
+            setTimeout(() => {
+                messageElement.classList.add('hidden');
+            }, 3000);
+        }
+
+        // دالة لفتح المودال (النافذة المنبثقة)
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        // دالة لإغلاق المودال
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            // إعادة تعيين الحقول ورسائل التنبيه عند إغلاق المودال
+            const inputs = document.querySelectorAll(`#${modalId} .input-field`);
+            inputs.forEach(input => {
+                if (input.type === 'number') {
+                    input.value = input.min || '0'; // إعادة تعيين الأرقام إلى الحد الأدنى أو صفر
+                } else {
+                    input.value = '';
+                }
+            });
+            const message = document.querySelector(`#${modalId} .alert-message`);
+            if (message) {
+                message.classList.add('hidden');
+            }
+        }
+
+        // جلب وعرض جميع المنتجات
+        async function fetchProducts() {
+            const productsListDiv = document.getElementById('productsList');
+            const productsListMessage = document.getElementById('productsListMessage');
+            productsListDiv.innerHTML = '<div class="col-span-full text-center text-gray-500">جاري تحميل المنتجات...</div>';
+            productsListMessage.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (response.ok) {
+                    const products = await response.json();
+                    productsListDiv.innerHTML = ''; // مسح المحتوى الحالي
+                    if (products.length === 0) {
+                        productsListDiv.innerHTML = '<div class="col-span-full text-center text-gray-500">لا توجد منتجات حالياً في المخزن.</div>';
+                    } else {
+                        products.forEach(product => {
+                            const productCard = `
+                                <div class="product-card">
+                                    <img src="${product.imageUrl}" alt="${product.productId}" class="product-image" onerror="this.onerror=null;this.src='https://placehold.co/120x120/CCCCCC/000000?text=No+Image';">
+                                    <h3>${product.companyName}</h3>
+                                    <p><strong>التسلسل:</strong> ${product.productId}</p>
+                                    <p><strong>الكمية:</strong> <span class="text-indigo-600 font-bold">${product.quantity}</span></p>
+                                </div>
+                            `;
+                            productsListDiv.insertAdjacentHTML('beforeend', productCard);
+                        });
+                    }
+                } else {
+                    showAlert(productsListMessage, 'فشل في جلب المنتجات: ' + response.statusText, 'error');
+                }
+            } catch (error) {
+                showAlert(productsListMessage, 'خطأ في الاتصال بالخادم عند جلب المنتجات. تأكد من عمل الخادم: ' + API_BASE_URL, 'error');
+            }
+        }
+
+        // البحث وعرض تفاصيل منتج واحد
+        const searchProductIdInput = document.getElementById('searchProductId');
+        const productDetailsDisplay = document.getElementById('productDetailsDisplay');
+        const searchMessage = document.getElementById('searchMessage');
+
+        searchProductIdInput.addEventListener('input', async () => {
+            const productId = searchProductIdInput.value.trim();
+            productDetailsDisplay.classList.add('hidden');
+            searchMessage.classList.add('hidden');
+
+            if (productId.length === 0) {
+                productDetailsDisplay.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/product/${productId}`);
+                if (response.ok) {
+                    const product = await response.json();
+                    productDetailsDisplay.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.productId}" class="product-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/CCCCCC/000000?text=No+Image';">
+                        <div>
+                            <p class="text-lg font-bold">اسم الشركة: ${product.companyName}</p>
+                            <p><strong>التسلسل:</strong> ${product.productId}</p>
+                            <p><strong>الكمية:</strong> <span class="text-indigo-700 font-extrabold">${product.quantity}</span></p>
+                        </div>
+                    `;
+                    productDetailsDisplay.classList.remove('hidden');
+                } else if (response.status === 404) {
+                    showAlert(searchMessage, 'المنتج غير موجود.', 'error');
+                    productDetailsDisplay.innerHTML = '';
+                } else {
+                    showAlert(searchMessage, 'خطأ في جلب تفاصيل المنتج: ' + response.statusText, 'error');
+                    productDetailsDisplay.innerHTML = '';
+                }
+            } catch (error) {
+                showAlert(searchMessage, 'خطأ في الاتصال بالخادم: ' + API_BASE_URL, 'error');
+                productDetailsDisplay.innerHTML = '';
+            }
+        });
+
+        // حدث زر تسجيل الخروج
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            window.location.href = 'index.html'; // العودة لصفحة تسجيل الدخول
+        });
+
+        // حدث زر "إضافة كمية"
+        document.getElementById('addQuantityBtn').addEventListener('click', () => {
+            openModal('addQuantityModal');
+        });
+
+        // إرسال طلب إضافة كمية
+        document.getElementById('submitAddQuantity').addEventListener('click', async () => {
+            const productId = document.getElementById('addQuantityProductId').value.trim();
+            const quantity = parseInt(document.getElementById('quantityToAdd').value);
+            const messageElement = document.getElementById('addQuantityMessage');
+
+            if (!productId || isNaN(quantity) || quantity <= 0) {
+                showAlert(messageElement, 'يرجى إدخال تسلسل منتج وكمية صالحة.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/update_quantity`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId, quantityChange: quantity })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showAlert(messageElement, result.message, 'success');
+                    fetchProducts(); // تحديث قائمة المنتجات
+                    searchProductIdInput.dispatchEvent(new Event('input')); // تحديث تفاصيل المنتج إذا كان معروضاً
+                } else {
+                    showAlert(messageElement, result.message || 'فشل إضافة الكمية.', 'error');
+                }
+            } catch (error) {
+                showAlert(messageElement, 'خطأ في الاتصال بالخادم: ' + API_BASE_URL, 'error');
+            }
+        });
+
+        // حدث زر "خصم كمية"
+        document.getElementById('subtractQuantityBtn').addEventListener('click', () => {
+            openModal('subtractQuantityModal');
+        });
+
+        // إرسال طلب خصم كمية
+        document.getElementById('submitSubtractQuantity').addEventListener('click', async () => {
+            const productId = document.getElementById('subtractQuantityProductId').value.trim();
+            const quantity = parseInt(document.getElementById('quantityToSubtract').value);
+            const messageElement = document.getElementById('subtractQuantityMessage');
+
+            if (!productId || isNaN(quantity) || quantity <= 0) {
+                showAlert(messageElement, 'يرجى إدخال تسلسل منتج وكمية صالحة.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/update_quantity`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId, quantityChange: -quantity }) // كمية سالبة للخصم
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showAlert(messageElement, result.message, 'success');
+                    fetchProducts(); // تحديث قائمة المنتجات
+                    searchProductIdInput.dispatchEvent(new Event('input')); // تحديث تفاصيل المنتج إذا كان معروضاً
+                } else {
+                    showAlert(messageElement, result.message || 'فشل خصم الكمية.', 'error');
+                }
+            } catch (error) {
+                showAlert(messageElement, 'خطأ في الاتصال بالخادم: ' + API_BASE_URL, 'error');
+            }
+        });
+
+        // حدث زر "إضافة منتج جديد"
+        document.getElementById('addProductBtn').addEventListener('click', () => {
+            openModal('addProductModal');
+        });
+
+        // إرسال طلب إضافة منتج جديد
+        document.getElementById('submitAddProduct').addEventListener('click', async () => {
+            const companyName = document.getElementById('newProductName').value.trim();
+            const productId = document.getElementById('newProductId').value.trim();
+            const quantity = parseInt(document.getElementById('newProductQuantity').value);
+            const imageUrl = document.getElementById('newProductImage').value.trim();
+            const messageElement = document.getElementById('addProductMessage');
+
+            if (!companyName || !productId || isNaN(quantity) || quantity < 0 || !imageUrl) {
+                showAlert(messageElement, 'يرجى ملء جميع الحقول بشكل صحيح.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/add_product`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ companyName, productId, quantity, imageUrl })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showAlert(messageElement, result.message, 'success');
+                    fetchProducts(); // تحديث قائمة المنتجات
+                    closeModal('addProductModal'); // إغلاق المودال بعد الإضافة بنجاح
+                } else {
+                    showAlert(messageElement, result.message || 'فشل إضافة المنتج.', 'error');
+                }
+            } catch (error) {
+                showAlert(messageElement, 'خطأ في الاتصال بالخادم: ' + API_BASE_URL, 'error');
+            }
+        });
+
+        // جلب المنتجات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+    </script>
+</body>
+</html>
