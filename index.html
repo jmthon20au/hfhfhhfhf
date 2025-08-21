@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة مخزن البورسلين - تسجيل الدخول</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Background animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #a8dadc, #457b9d);
+            animation: backgroundShift 15s ease infinite alternate;
+            z-index: -1;
+        }
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem; /* p-10 */
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(0);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            font-size: 1rem;
+            color: #374151; /* text-gray-700 */
+            background-color: #f9fafb; /* bg-gray-50 */
+            transition: all 0.3s ease;
+            padding-left: 2.75rem; /* مسافة للأيقونة */
+            text-align: right; /* محاذاة النص لليمين */
+            padding-right: 1rem; /* إعادة مسافة البادئة اليمنى */
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #4f46e5; /* indigo-600 */
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* ring-indigo-500/50 */
+            background-color: #ffffff;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 1rem; /* وضع الأيقونة على اليسار */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280; /* text-gray-400 */
+            pointer-events: none;
+        }
+        .login-button {
+            width: 100%;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(45deg, #4f46e5, #6366f1); /* indigo-600 to indigo-500 */
+            color: #ffffff;
+            border: none;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-button:hover {
+            background: linear-gradient(45deg, #6366f1, #4f46e5); /* Swap gradient direction */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        .login-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+        .login-button:hover::after {
+            animation: buttonRipple 1s ease-out forwards;
+        }
+        @keyframes buttonRipple {
+            0% { width: 5px; height: 5px; opacity: 0.5; }
+            100% { width: 200px; height: 200px; opacity: 0; }
+        }
+        .error-message {
+            color: #ef4444; /* red-500 */
+            margin-top: 1rem;
+            font-size: 0.875rem; /* text-sm */
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInError 0.5s forwards;
+        }
+        @keyframes slideInError {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            color: #1f2937; /* gray-900 */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 2rem;
+            font-size: 1.875rem; /* text-3xl */
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>تسجيل الدخول - إدارة مخزن البورسلين</h2>
+        <div class="input-group">
+            <i class="fas fa-user icon"></i>
+            <input type="text" id="username" placeholder="اسم المستخدم" required>
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock icon"></i>
+            <input type="password" id="password" placeholder="كلمة المرور" required>
+        </div>
+        <button id="loginButton" class="login-button">
+            <i class="fas fa-sign-in-alt ml-2"></i> دخول
+        </button>
+        <p id="errorMessage" class="error-message hidden">اسم المستخدم أو كلمة المرور غير صحيحة.</p>
+    </div>
+
+    <script>
+        // *** مهم جداً: استبدل هذا الرابط برابط الـ Backend الفعلي بعد الرفع على Railway ***
+        // مثال: const API_BASE_URL = 'https://your-railway-app-name-xxxx.up.railway.app';
+        // للتشغيل المحلي، اتركه كما هو: 'http://127.0.0.1:5000'
+        const API_BASE_URL = 'http://127.0.0.1:5000'; 
+
+        document.getElementById('loginButton').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            errorMessage.classList.add('hidden'); // إخفاء الرسالة القديمة
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = 'dashboard.html'; // الانتقال إلى لوحة التحكم
+                    } else {
+                        errorMessage.textContent = data.message;
+                        errorMessage.classList.remove('hidden');
+                    }
+                } else {
+                    // إذا لم تكن الاستجابة 200 OK
+                    let errorText = 'خطأ في الاتصال بالخادم.';
+                    try {
+                        const errorData = await response.json();
+                        errorText = errorData.message || errorText;
+                    } catch (e) {
+                        // إذا لم تكن الاستجابة JSON
+                        errorText = `خطأ: ${response.status} ${response.statusText}`;
+                    }
+                    errorMessage.textContent = errorText;
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                // هذا الخطأ يحدث إذا لم يتمكن المتصفح من الوصول إلى الخادم على الإطلاق (Failed to fetch)
+                errorMessage.textContent = 'تعذر الاتصال بالخادم. تأكد من أن الخادم يعمل وأن الرابط صحيح: ' + API_BASE_URL;
+                errorMessage.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
